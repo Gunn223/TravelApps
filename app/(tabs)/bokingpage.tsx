@@ -1,14 +1,14 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 
-const bokingpage = () => {
+const Bokingpage = () => {
   return (
     <View>
-      <Text>bokingpage</Text>
+      <Text>Bokingpage</Text>
     </View>
   )
 }
 
-export default bokingpage
+export default Bokingpage
 
 const styles = StyleSheet.create({})
