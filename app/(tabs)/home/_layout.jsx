@@ -1,6 +1,6 @@
-import { StyleSheet } from 'react-native';
-import React from 'react';
-import { Drawer } from 'expo-router/drawer';
+import { StyleSheet, Text } from "react-native";
+import React from "react";
+import { Drawer } from "expo-router/drawer";
 
 const _layout = () => {
   return (
@@ -16,17 +16,23 @@ export default _layout;
 const styles = StyleSheet.create({});
 const Burgerr = () => {
   return (
-    <Drawer screenOptions={{ drawerType: 'back' }}>
+    <Drawer screenOptions={{ drawerType: "back" }}>
       <Drawer.Screen
-        name="index"
+        name="Home"
         options={{
-          drawerLabel: 'Home',
+          drawerLabel: "Home",
         }}
       />
       <Drawer.Screen
-        name="(drawerlayout)/Coba/Coba"
+        name="History"
         options={{
-          drawerLabel: 'coba',
+          drawerLabel: "History",
+        }}
+      />
+      <Drawer.Screen
+        name="Setting"
+        options={{
+          drawerLabel: "Setting",
         }}
       />
     </Drawer>
