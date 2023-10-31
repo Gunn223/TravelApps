@@ -18,11 +18,6 @@ Tugas ini merupakan salah satu syarat untuk memenuhi penilaian dalam mata kuliah
 
 
 
-
-### Struktur Proyek
-
-Penjelasan singkat tentang struktur direktori proyek dan apa yang terdapat dalam setiap direktori.
-
 ### Cara Menjalankan Proyek
 
 - clone reppo ke local
