@@ -98,14 +98,6 @@ const index = () => {
           source={require("../../assets/images/google.png")}
           style={styles.socialIcon}
         />
-        <Image
-          source={require("../../assets/images/facebook.png")}
-          style={styles.socialIcon}
-        />
-        <Image
-          source={require("../../assets/images/twitter.png")}
-          style={styles.socialIcon}
-        />
       </View>
 
       <Text style={styles.loginText}>
