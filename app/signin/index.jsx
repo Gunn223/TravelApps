@@ -1,21 +1,23 @@
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, Image } from 'react-native';
 import React, { useState } from 'react';
 import { Link, router } from 'expo-router';
-import { GetUser } from '../../services/GetData';
+import { GetUser, GetUserbyId } from '../../services/GetData';
 import { useEffect } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 const index = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [data, setData] = useState([]);
 
   useEffect(() => {
     GetUser((data) => {
-      // console.log(data);
-    }, 3);
+      setData(data);
+    });
   }, []);
-  
-  const handleLogin = () => {
+
+  const handleLogin = async () => {
     // Lakukan validasi input email dan password di sini
     if (!email && !password) {
       // Jika tidak ada email dan password
@@ -26,15 +28,21 @@ const index = () => {
     } else if (!password) {
       // Jika tidak ada password
       setErrorMessage('Password is required');
-    } else {
-      // Jika valid, navigasikan ke halaman Home
-      router.replace('/(tabs)/home');
     }
 
     // Atur timeout untuk menghilangkan pesan kesalahan setelah 2 detik
     setTimeout(() => {
       setErrorMessage('');
     }, 1000);
+    const FindCurentuser = data.find((user) => user.email === email);
+    const FindCurentuserPassword = data.find((user) => user.password === password);
+    if (FindCurentuser && FindCurentuserPassword) {
+      router.replace('/(tabs)/home');
+      const setId = FindCurentuser.id_user.toString();
+      await AsyncStorage.setItem('id', setId);
+    } else {
+      setErrorMessage('User Not Found');
+    }
   };
 
   const togglePasswordVisibility = () => {

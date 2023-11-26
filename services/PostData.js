@@ -1,11 +1,12 @@
 import axios from 'axios';
 import qs from 'qs';
+import tunel from './ngrok';
 export const Register = async (data = {}) => {
   try {
     const options = {
       method: 'POST',
       headers: { 'content-type': 'application/x-www-form-urlencoded' },
-      url: 'https://81d9-125-166-0-249.ngrok-free.app/addUser',
+      url: `${tunel}/addUser`,
     };
 
     // Menggunakan qs.stringify untuk merubah objek data menjadi format x-www-form-urlencoded

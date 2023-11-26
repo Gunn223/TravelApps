@@ -5,6 +5,7 @@ import { useEffect } from 'react';
 import { Register } from '../../services/PostData';
 // import { useDispatch } from 'react-redux';
 import { registerReducer } from '../../redux/actions/registerSlice';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const index = () => {
   const [username, setUsername] = useState('');
@@ -21,7 +22,27 @@ const index = () => {
   }, [username, password, email]);
   // console.log(username, email, password);
 
+  const validateEmail = (email) => {
+    // Validasi email menggunakan pola regex sederhana
+    const emailRegex = /\S+@\S+\.\S+/;
+    return emailRegex.test(email);
+  };
+
+  const validatePassword = (password) => {
+    // Validasi password minimal 8 karakter
+    return password.length >= 8;
+  };
+
   const handleRegister = () => {
+    if (!validateEmail(email)) {
+      setErrorMessage('Invalid email address');
+      return;
+    }
+
+    if (!validatePassword(password)) {
+      setErrorMessage('Password must be at least 8 characters long');
+      return;
+    }
     // Lakukan validasi input email dan password di sini
     if (!email && !password) {
       // Jika tidak ada email dan password
@@ -43,6 +64,7 @@ const index = () => {
     }, 1000);
 
     // dispacth(registerReducer(data));
+
     Register(data);
   };
 

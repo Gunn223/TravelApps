@@ -1,9 +1,12 @@
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
-import React from 'react';
+import React, { useState } from 'react';
 import CardPromotionHome from '../../../src/components/CardsPromotionHome';
 import CardDestination from '../../../src/components/CardDestination';
 import { FontAwesome5 } from '@expo/vector-icons';
+import { useLogin } from '../../../hooks/useLogin';
 const index = () => {
+  // const Login = useLogin();
+  const [data, setData] = useState([]);
   return (
     <View style={styles.container}>
       <ScrollView showsVerticalScrollIndicator={false}>
