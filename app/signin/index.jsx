@@ -1,39 +1,39 @@
-import {
-  StyleSheet,
-  Text,
-  View,
-  TextInput,
-  TouchableOpacity,
-  Image,
-} from "react-native";
-import React, { useState } from "react";
-import { Link, router } from "expo-router";
-
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, Image } from 'react-native';
+import React, { useState } from 'react';
+import { Link, router } from 'expo-router';
+import { GetUser } from '../../services/GetData';
+import { useEffect } from 'react';
 const index = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
+  useEffect(() => {
+    GetUser((data) => {
+      // console.log(data);
+    }, 3);
+  }, []);
+  
   const handleLogin = () => {
     // Lakukan validasi input email dan password di sini
     if (!email && !password) {
       // Jika tidak ada email dan password
-      setErrorMessage("Email and password are required");
+      setErrorMessage('Email and password are required');
     } else if (!email) {
       // Jika tidak ada email
-      setErrorMessage("Email is required");
+      setErrorMessage('Email is required');
     } else if (!password) {
       // Jika tidak ada password
-      setErrorMessage("Password is required");
+      setErrorMessage('Password is required');
     } else {
       // Jika valid, navigasikan ke halaman Home
-      router.replace("/(tabs)/home");
+      router.replace('/(tabs)/home');
     }
 
     // Atur timeout untuk menghilangkan pesan kesalahan setelah 2 detik
     setTimeout(() => {
-      setErrorMessage("");
+      setErrorMessage('');
     }, 1000);
   };
 
@@ -44,7 +44,7 @@ const index = () => {
   return (
     <View style={styles.container}>
       <Image
-        source={require("../../assets/images/logo.png")}
+        source={require('../../assets/images/logo.png')}
         style={styles.logo}
       />
 
@@ -65,14 +65,9 @@ const index = () => {
         />
         <TouchableOpacity
           onPress={togglePasswordVisibility}
-          style={styles.passwordToggle}
-        >
+          style={styles.passwordToggle}>
           <Image
-            source={
-              showPassword
-                ? require("../../assets/images/show.png")
-                : require("../../assets/images/hide.png")
-            }
+            source={showPassword ? require('../../assets/images/show.png') : require('../../assets/images/hide.png')}
             style={styles.passwordToggleIcon}
           />
         </TouchableOpacity>
@@ -82,20 +77,17 @@ const index = () => {
         <Text style={styles.errorMessage}>{errorMessage}</Text>
       ) : null}
 
-      <TouchableOpacity style={styles.submitButton} onPress={handleLogin}>
+      <TouchableOpacity
+        style={styles.submitButton}
+        onPress={handleLogin}>
         <Text style={styles.submitButtonText}>Submit</Text>
       </TouchableOpacity>
 
-      <View style={styles.socialButtons}>
-        <Image
-          source={require("../../assets/images/google.png")}
-          style={styles.socialIcon}
-        />
-      </View>
-
       <Text style={styles.loginText}>
-        Not a user?{" "}
-        <Link href="/signup" style={styles.loginLink}>
+        Not a user?
+        <Link
+          href="/signup"
+          style={styles.loginLink}>
           SIGN UP
         </Link>
       </Text>
@@ -108,8 +100,8 @@ export default index;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
     padding: 16,
   },
   logo: {
@@ -122,27 +114,27 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   input: {
-    width: "100%",
+    width: '100%',
     padding: 10,
     marginVertical: 8,
     borderWidth: 1,
     borderRadius: 8,
-    borderColor: "#ccc",
+    borderColor: '#ccc',
   },
   submitButton: {
-    width: "100%",
+    width: '100%',
     padding: 12,
-    backgroundColor: "red",
+    backgroundColor: 'red',
     borderRadius: 8,
-    alignItems: "center",
+    alignItems: 'center',
     marginTop: 20,
   },
   submitButtonText: {
-    color: "white",
+    color: 'white',
     fontSize: 16,
   },
   socialButtons: {
-    flexDirection: "row",
+    flexDirection: 'row',
     marginVertical: 20,
   },
   socialIcon: {
@@ -154,12 +146,12 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   loginLink: {
-    color: "blue",
-    textDecorationLine: "underline",
-    fontWeight: "bold",
+    color: 'blue',
+    textDecorationLine: 'underline',
+    fontWeight: 'bold',
   },
   errorMessage: {
-    color: "red",
+    color: 'red',
     fontSize: 14,
     marginTop: 10,
   },
@@ -168,11 +160,11 @@ const styles = StyleSheet.create({
     height: 10,
   },
   passwordInput: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     borderWidth: 1,
     borderRadius: 8,
-    borderColor: "#ccc",
+    borderColor: '#ccc',
     marginTop: 8,
     paddingHorizontal: 10,
   },

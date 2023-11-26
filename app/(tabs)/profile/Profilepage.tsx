@@ -1,10 +1,12 @@
 import { StyleSheet, TouchableOpacity, View, Image, Text, ScrollView } from 'react-native';
 import { MaterialCommunityIcons, AntDesign, Entypo, FontAwesome5 } from '@expo/vector-icons';
+import { GetUser } from '../../../services/GetData';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'expo-router';
 
 const profilepage = () => {
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
