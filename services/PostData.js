@@ -6,7 +6,7 @@ export const Register = async (data = {}) => {
     const options = {
       method: 'POST',
       headers: { 'content-type': 'application/x-www-form-urlencoded' },
-      url: `${tunel}/addUser`,
+      url: `${tunel}/users/addUser`,
     };
 
     // Menggunakan qs.stringify untuk merubah objek data menjadi format x-www-form-urlencoded

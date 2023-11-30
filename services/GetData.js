@@ -1,7 +1,6 @@
 import axios from 'axios';
 import tunel from './ngrok';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-export const GetUser = async (data, id) => {
+export const GetUser = async (data) => {
   try {
     const res = await axios.get(`${tunel}/users`);
 
@@ -11,14 +10,11 @@ export const GetUser = async (data, id) => {
     //  console.log(error);
   }
 };
-export const GetUserbyId = async (data) => {
+export const GetUserbyId = async (data, id) => {
   try {
-    const getById = await AsyncStorage.getItem('id');
+    const res = await axios.get(`${tunel}/users/${id}`);
 
-    const res = await axios.get(`${tunel}/user/${getById}`);
     data(res.data);
-    // const res = await axios.get(`${tunel}/user/${id}`);
-    // data(res.data);
   } catch (error) {
     data(error.message);
     //  console.log(error);
