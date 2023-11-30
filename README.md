@@ -19,12 +19,19 @@ Tugas ini merupakan salah satu syarat untuk memenuhi penilaian dalam mata kuliah
 
 
 ### Cara Menjalankan Proyek
-
+1. Bagian backend:
 - clone reppo ke local
-- npm install
-- npx expo 
-
-
+- swicth branch Backend-tr
+- npm i
+- npm start 
+- dowload ngrok dan daftar jalankan ngrok buat tunel req ke port BE
+2. bagian frontend :
+- clone reppo ke local
+- swicth ke main reppo
+- npm i
+- cari folder tunel dan file tunel.js ubah value const tunel dari url tunel dari ngrok
+- npm start
+  
 
 ## Kontribusi
 
