@@ -1,51 +1,65 @@
-import { Tabs } from 'expo-router';
-import { Entypo } from '@expo/vector-icons';
-import { FontAwesome } from '@expo/vector-icons';
-import { AntDesign } from '@expo/vector-icons';
+import { Tabs } from "expo-router";
+import { Text } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { FontAwesome } from "@expo/vector-icons";
 export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
-      }}>
+      }}
+    >
       <Tabs.Screen
         name="home"
         options={{
+          title: "Home",
           headerShown: false,
-          tabBarIcon: ({ color, size }) => (
-            <Entypo
-              name="home"
+          tabBarIcon: ({ focused }) => (
+            <Ionicons
+              name={focused ? "home" : "home-outline"} // Use "home" if focused, else "home-outline"
               size={24}
-              color="black"
+              color={focused ? "red" : "black"}
             />
+          ),
+          tabBarLabel: ({ focused }) => (
+            <Text style={{ color: focused ? "red" : "black" }}>Home</Text>
           ),
         }}
       />
       <Tabs.Screen
         name="boking/index"
         options={{
-          title: 'Boking',
+          title: "Booking",
           headerShown: false,
-          tabBarIcon: ({ color, size }) => (
-            <FontAwesome
-              name="ticket"
+          tabBarIcon: ({ focused }) => (
+            <MaterialCommunityIcons
+              name={
+                focused ? "ticket-confirmation" : "ticket-confirmation-outline"
+              }
               size={24}
-              color="black"
+              color={focused ? "red" : "black"}
             />
+          ),
+          tabBarLabel: ({ focused }) => (
+            <Text style={{ color: focused ? "red" : "black" }}>Booking</Text>
           ),
         }}
       />
       <Tabs.Screen
         name="profile/Profilepage"
         options={{
-          title: 'Profile',
+          title: "Profile",
           headerShown: false,
-          tabBarIcon: ({ color, size, focused }) => (
-            <AntDesign
-              name="user"
+          tabBarIcon: ({ focused }) => (
+            <FontAwesome
+              name={focused ? "user" : "user-o"}
               size={24}
-              color="black"
+              color={focused ? "red" : "black"}
             />
+          ),
+          tabBarLabel: ({ focused }) => (
+            <Text style={{ color: focused ? "red" : "black" }}>Profile</Text>
           ),
         }}
       />

@@ -6,12 +6,32 @@ import {
   Image,
   ScrollView,
 } from "react-native";
-import React, { useState } from "react";
-import { Picker } from "@react-native-picker/picker";
+import { router } from "expo-router";
+
+const trips = [
+  {
+    title: "Open Trip Singapore",
+    date: "20 Desember 2023",
+    image: require("../../../assets/images/3.png"), // replace with your actual image path
+  },
+  {
+    title: "Open Trip Malaysia",
+    date: "24 Desember 2023",
+    image: require("../../../assets/images/2.png"), // replace with your actual image path
+  },
+  {
+    title: "Open Trip Europe",
+    date: "4 Desember 2023",
+    image: require("../../../assets/images/3.png"), // replace with your actual image path
+  },
+  // Add more trips as needed
+];
+
+const handleDetailPress = () => {
+  router.replace("/detail"); // Replace 'Detail' with your actual route name and pass appropriate params
+};
 
 const index = () => {
-  const [selectedDate, setSelectedDate] = useState("5 - 11 September 2023");
-
   return (
     <View style={styles.container}>
       <Image
@@ -19,92 +39,19 @@ const index = () => {
         style={styles.logo}
       />
       <ScrollView style={styles.scrollContainer}>
-        <View style={styles.card}>
-          <Image
-            source={require("../../../assets/images/3.png")}
-            style={styles.cardImage}
-          />
-          <Text style={styles.cardTitle}>Open Trip 3 Negara</Text>
-          <Text style={styles.cardSubtitle}>Departure</Text>
-          <View style={styles.pickerContainer}>
-            <Picker
-              selectedValue={selectedDate}
-              style={styles.picker}
-              onValueChange={(itemValue, itemIndex) =>
-                setSelectedDate(itemValue)
-              }
+        {trips.map((trip, index) => (
+          <View key={index} style={styles.card}>
+            <Image source={trip.image} style={styles.cardImage} />
+            <Text style={styles.cardTitle}>{trip.title}</Text>
+            <Text style={styles.cardDate}>{trip.date}</Text>
+            <TouchableOpacity
+              style={styles.detailButton}
+              onPress={handleDetailPress}
             >
-              <Picker.Item
-                label="5 - 11 September 2023"
-                value="5 - 11 September 2023"
-              />
-              <Picker.Item label="1 - 7 Oktober" value="1 - 7 Oktober" />
-              <Picker.Item label="15 - 21 Oktober" value="15 - 21 Oktober" />
-            </Picker>
+              <Text style={styles.detailText}>Detail Paket</Text>
+            </TouchableOpacity>
           </View>
-          <TouchableOpacity style={styles.bookingButton}>
-            <Text style={styles.bookingText}>Booking</Text>
-          </TouchableOpacity>
-        </View>
-        <View style={styles.card}>
-          <Image
-            source={require("../../../assets/images/2.png")}
-            style={styles.cardImage}
-          />
-          <Text style={styles.cardTitle}>Open Trip 2 Negara</Text>
-          <Text style={styles.cardSubtitle}>Departure</Text>
-
-          <View style={styles.pickerContainer}>
-            <Picker
-              selectedValue={selectedDate}
-              style={styles.picker}
-              onValueChange={(itemValue, itemIndex) =>
-                setSelectedDate(itemValue)
-              }
-            >
-              <Picker.Item
-                label="5 - 11 September 2023"
-                value="5 - 11 September 2023"
-              />
-              <Picker.Item label="1 - 7 Oktober" value="1 - 7 Oktober" />
-              <Picker.Item label="15 - 21 Oktober" value="15 - 21 Oktober" />
-            </Picker>
-          </View>
-
-          <TouchableOpacity style={styles.bookingButton}>
-            <Text style={styles.bookingText}>Booking</Text>
-          </TouchableOpacity>
-        </View>
-        <View style={styles.card}>
-          <Image
-            source={require("../../../assets/images/2.png")}
-            style={styles.cardImage}
-          />
-          <Text style={styles.cardTitle}>Open Trip Bali</Text>
-          <Text style={styles.cardSubtitle}>Departure</Text>
-
-          <View style={styles.pickerContainer}>
-            <Picker
-              selectedValue={selectedDate}
-              style={styles.picker}
-              onValueChange={(itemValue, itemIndex) =>
-                setSelectedDate(itemValue)
-              }
-            >
-              <Picker.Item
-                label="5 - 11 September 2023"
-                value="5 - 11 September 2023"
-              />
-              <Picker.Item label="1 - 7 Oktober" value="1 - 7 Oktober" />
-              <Picker.Item label="15 - 21 Oktober" value="15 - 21 Oktober" />
-              <Picker.Item label="23 - 30 Oktober" value="23 - 30 Oktober" />
-            </Picker>
-          </View>
-
-          <TouchableOpacity style={styles.bookingButton}>
-            <Text style={styles.bookingText}>Booking</Text>
-          </TouchableOpacity>
-        </View>
+        ))}
       </ScrollView>
     </View>
   );
@@ -133,7 +80,7 @@ const styles = StyleSheet.create({
   },
   cardImage: {
     width: "100%",
-    height: 150,
+    height: 200,
     borderRadius: 10,
   },
   cardTitle: {
@@ -141,31 +88,26 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginTop: 10,
   },
-  cardSubtitle: {
+  cardDate: {
     fontSize: 16,
     color: "grey",
     marginTop: 5,
   },
-  pickerContainer: {
-    borderWidth: 1,
-    borderColor: "#e0e0e0",
-    borderRadius: 5,
-    marginTop: 5,
-  },
-  picker: {
-    height: 50,
-    width: "100%",
-  },
-  bookingButton: {
-    backgroundColor: "#e74c3c",
+  detailButton: {
+    backgroundColor: "red",
     padding: 10,
     marginTop: 10,
     borderRadius: 5,
     alignItems: "center",
   },
-  bookingText: {
+  detailText: {
     color: "#fff",
     fontWeight: "bold",
+  },
+  cardSubtitle: {
+    fontSize: 16,
+    color: "grey",
+    marginTop: 5,
   },
   scrollContainer: {
     borderRadius: 20,
