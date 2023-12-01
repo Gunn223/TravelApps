@@ -1,20 +1,18 @@
 import { StyleSheet, TouchableOpacity, View, Image, Text, ScrollView } from 'react-native';
 import { MaterialCommunityIcons, AntDesign, Entypo, FontAwesome5 } from '@expo/vector-icons';
 import { GetUser, GetUserbyId } from '../../../services/GetData';
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useEffect, useState } from 'react';
-import { Link } from 'expo-router';
+import { Link, router } from 'expo-router';
 
 const profilepage = () => {
   const [item, setItem] = useState([]);
-
   useEffect(() => {
     GetUserbyId((data) => {
-      setItem(data);
-    }, 61);
+      setItem(data || []);
+    });
   }, []);
   // buat id agar dinamis mengikuti user login
-
   return (
     <View style={styles.container}>
       {item.length > 0 &&
@@ -61,7 +59,8 @@ const profilepage = () => {
                     borderRadius: 50,
                     alignItems: 'center',
                     justifyContent: 'center',
-                  }}>
+                  }}
+                  onPress={() => router.replace('/updateUser/Index')}>
                   <MaterialCommunityIcons
                     name="pencil"
                     size={24}
@@ -84,7 +83,7 @@ const profilepage = () => {
               <Text style={{ fontSize: 14, fontWeight: '400', lineHeight: 24 }}>{data.bio}</Text>
               <View style={{ borderTopWidth: 1, marginTop: 20, borderColor: 'gray' }}>
                 <ScrollView style={{ minHeight: '100%' }}>
-                  <TouchableOpacity style={{ flex: 1, flexDirection: 'row', paddingVertical: 16 }}>
+                  {/* <TouchableOpacity style={{ flex: 1, flexDirection: 'row', paddingVertical: 16 }}>
                     <AntDesign
                       name="creditcard"
                       color="#e74c3c"
@@ -99,7 +98,7 @@ const profilepage = () => {
                       }}>
                       payment details
                     </Text>
-                  </TouchableOpacity>
+                  </TouchableOpacity> */}
 
                   <TouchableOpacity style={{ flex: 1, flexDirection: 'row', paddingVertical: 16 }}>
                     <Entypo

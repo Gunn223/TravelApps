@@ -3,19 +3,23 @@ import React, { useState } from 'react';
 import { Link, router } from 'expo-router';
 import { GetUser } from '../../services/GetData';
 import { useEffect } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 const index = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [data, setData] = useState([]);
 
   useEffect(() => {
-    GetUser((data) => {
-      // console.log(data);
-    }, 3);
+    GetUser((data: []) => {
+      if (data.length > 0) {
+        setData(data);
+      }
+    });
   }, []);
-  
-  const handleLogin = () => {
+
+  const handleLogin = async () => {
     // Lakukan validasi input email dan password di sini
     if (!email && !password) {
       // Jika tidak ada email dan password
@@ -26,8 +30,16 @@ const index = () => {
     } else if (!password) {
       // Jika tidak ada password
       setErrorMessage('Password is required');
-    } else {
-      // Jika valid, navigasikan ke halaman Home
+    }
+    data ? console.log(data) : [];
+    const item: any = data.find(
+      (user: { email: string; password: string }) => user.email === email && user.password === password,
+    );
+
+    if (item.email === email && item.password === password) {
+      const setIduser = item.id_user.toString();
+      console.log(setIduser);
+      AsyncStorage.setItem('id', setIduser);
       router.replace('/(tabs)/home');
     }
 
