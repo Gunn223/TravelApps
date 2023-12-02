@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, TextInput, Button, Alert } from 'react-native';
-
+import * as ImagePicker from 'expo-image-picker';
+import { Image } from 'react-native';
+import { Iduser, UpdateUser } from '../../services/PostData';
 const Index = () => {
   const [username, setUsername] = useState('');
   const [lokasi, setLokasi] = useState('');
@@ -10,37 +12,79 @@ const Index = () => {
   const [email, setEmail] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
 
-  const handlePostData = async () => {
-    try {
-      const response = await fetch('https://your-api-endpoint.com/update/1', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          username,
-          lokasi,
-          bio,
-          sampul_bg: sampulBg,
-          image_profile: imageProfile,
-          email,
-          phone_number: phoneNumber,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Terjadi kesalahan saat mengirim data');
+  const [image, setImage] = useState(null);
+  // const [imagename, setImagname] = useState(null);
+  // console.log(image);
+  // const pathImage = `file:///var/mobile/Containers/Data/Application/D03A7138-764D-4CF8-A5AA-B952E96DAF90/Library/Caches/ExponentExperienceData/%2540anonymous%252FTravelApps-feab9623-70a5-4e55-a2ab-014094ada29d/ImagePicker/91ACE55A-EFB4-4A3C-9D0F-5DDAAFE74237.jpg`;
+  // const path2 =
+  //   'file:///var/mobile/Containers/Data/Application/D03A7138-764D-4CF8-A5AA-B952E96DAF90/Library/Caches/ExponentExperienceData/%2540anonymous%252FTravelApps-feab9623-70a5-4e55-a2ab-014094ada29d/ImagePicker/E81C4918-58E0-4B4E-A8ED-27076967FCED.jpg';
+  // const path =
+  //   'file:///var/mobile/Containers/Data/Application/D03A7138-764D-4CF8-A5AA-B952E96DAF90/Library/Caches/ExponentExperienceData/%2540anonymous%252FTravelApps-feab9623-70a5-4e55-a2ab-014094ada29d/ImagePicker/BFF566BE-F98B-451F-97B3-11CCD0E3375B.jpg';
+  useEffect(() => {
+    const requestMediaLibraryPermissionsAsync = async () => {
+      if (Platform.OS !== 'web') {
+        try {
+          const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+          if (status !== 'granted') {
+            Alert.alert('Permission Denied', 'Please enable permission to access the media library.');
+          }
+        } catch (error) {
+          console.error('Error requesting permissions:', error);
+        }
       }
+    };
 
-      const result = await response.json();
-      Alert.alert('Sukses', 'Data berhasil diperbarui');
-    } catch (error) {
-      Alert.alert('Error', `Terjadi kesalahan: ${error.message}`);
+    requestMediaLibraryPermissionsAsync();
+  }, []); // Empty dependency array means this effect runs once after the initial render
+  const pickImage = async () => {
+    // No permissions request is necessary for launching the image library
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      setImage(result.assets[0].uri);
     }
+  };
+
+  const handleUpdateUser = () => {
+    const data = {
+      username: username,
+      lokasi: lokasi,
+      bio: bio,
+      sampul_bg: sampulBg,
+      image_profile: imageProfile,
+      email: email,
+      phone_number: phoneNumber,
+    };
+    UpdateUser(Iduser, data);
   };
 
   return (
     <View style={styles.container}>
+      <Button
+        title="Pick an image from camera roll"
+        onPress={pickImage}
+      />
+      {/* {image && (
+        <>
+          <Image
+            source={{ uri: path2 }}
+            style={{ width: 200, height: 200 }}
+          />
+          <Image
+            source={{ uri: path }}
+            style={{ width: 200, height: 200 }}
+          />
+          <Image
+            source={{ uri: pathImage }}
+            style={{ width: 200, height: 200 }}
+          />
+        </>
+      )} */}
       <Text>Pages Update</Text>
       <TextInput
         style={styles.input}
@@ -67,11 +111,7 @@ const Index = () => {
         placeholder="Image Profile"
         onChangeText={(text) => setImageProfile(text)}
       />
-      <TextInput
-        style={styles.input}
-        placeholder="Email"
-        onChangeText={(text) => setEmail(text)}
-      />
+
       <TextInput
         style={styles.input}
         placeholder="Phone Number"
@@ -79,7 +119,7 @@ const Index = () => {
       />
       <Button
         title="Update Data"
-        onPress={handlePostData}
+        onPress={handleUpdateUser}
       />
     </View>
   );

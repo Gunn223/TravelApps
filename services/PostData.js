@@ -1,6 +1,8 @@
 import axios from 'axios';
 import qs from 'qs';
 import tunel from './ngrok';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 export const Register = async (data = {}) => {
   try {
     const options = {
@@ -27,3 +29,33 @@ export const Register = async (data = {}) => {
     console.error('Error Register:', error);
   }
 };
+
+export const UpdateUser = async (id, userData) => {
+  try {
+    const options = {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      url: `${tunel}/users/update/${id}`,
+    };
+    const requestData = qs.stringify({
+      username: data.username || 'default',
+      lokasi: data.lokasi || 'Default',
+      bio: data.bio || 'Default',
+      sampul_bg: data.sampul_bg || 'default',
+      image_profile: data.image_profile || 'default',
+      email: data.email || 'Default',
+      phone_number: data.phone_number || '00000',
+      password: data.password || 'default',
+    });
+
+    const res = await axios.post(options.url, requestData, options);
+
+    return res.data;
+  } catch (error) {
+    console.error('Error updating user:', error);
+    // Depending on your error handling strategy, you might want to re-throw the error or return a specific value
+    throw error;
+  }
+};
+
+export const Iduser = AsyncStorage.getItem('id');
