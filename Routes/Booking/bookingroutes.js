@@ -16,7 +16,8 @@ router.post('/addBooking', (req, res) => {
     }
 
     const data = JSON.stringify(result);
-    res.status(201).send(data); // Mengirimkan respons dengan kode status 201 Created
+    res.status(201).send(data);
+
   });
 });
 
