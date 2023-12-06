@@ -12,6 +12,7 @@ const profilepage = () => {
       setItem(data || []);
     });
   }, []);
+
   // buat id agar dinamis mengikuti user login
   return (
     <View style={styles.container}>
@@ -139,7 +140,9 @@ const profilepage = () => {
                       size={24}
                     />
                     <Link
-                      onPress={() => AsyncStorage.removeItem('id')}
+                      onPress={() => {
+                        AsyncStorage.removeItem('id'), AsyncStorage.removeItem('token');
+                      }}
                       href="/signin/"
                       style={{
                         marginStart: 16,

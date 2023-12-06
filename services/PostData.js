@@ -57,5 +57,26 @@ export const UpdateUser = async (id, userData) => {
     throw error;
   }
 };
+export const Login = async (userData, errMessage) => {
+  try {
+    // console.log(userData);
+    // terdapat bug 2 kali click baru data bisa login
+    const options = {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, // Change content type
+      url: `${tunel}/users/login`,
+    };
+    const data = qs.stringify({
+      email: userData.email,
+      password: userData.password,
+    });
+
+    const res = await axios.post(options.url, data, options);
+    // console.log(res.data);
+    return await res.data;
+  } catch (error) {
+    errMessage(error);
+  }
+};
 
 export const Iduser = AsyncStorage.getItem('id');
