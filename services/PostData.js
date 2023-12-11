@@ -30,7 +30,7 @@ export const Register = async (data = {}) => {
   }
 };
 
-export const UpdateUser = async (id, userData) => {
+export const UpdateUser = async (id, data) => {
   try {
     const options = {
       method: 'PUT',

@@ -101,7 +101,9 @@ const profilepage = () => {
                     </Text>
                   </TouchableOpacity> */}
 
-                  <TouchableOpacity style={{ flex: 1, flexDirection: 'row', paddingVertical: 16 }}>
+                  <Link
+                    style={{ flex: 1, flexDirection: 'row', paddingVertical: 16 }}
+                    href={'/(tabs)/home/History'}>
                     <Entypo
                       name="users"
                       color="#e74c3c"
@@ -109,14 +111,13 @@ const profilepage = () => {
                     />
                     <Text
                       style={{
-                        marginStart: 16,
                         fontSize: 16,
                         fontWeight: '500',
                         lineHeight: 24,
                       }}>
                       History
                     </Text>
-                  </TouchableOpacity>
+                  </Link>
                   <TouchableOpacity style={{ flex: 1, flexDirection: 'row', paddingVertical: 16 }}>
                     <AntDesign
                       name="setting"

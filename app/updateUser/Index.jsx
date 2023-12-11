@@ -8,16 +8,17 @@ import { AntDesign } from '@expo/vector-icons';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { Link } from 'expo-router';
 import { Camera, CameraType } from 'expo-camera';
+
 const Index = () => {
   const [username, setUsername] = useState('');
   const [lokasi, setLokasi] = useState('');
   const [bio, setBio] = useState('');
-  const [sampulBg, setSampulBg] = useState('');
-  const [imageProfile, setImageProfile] = useState('');
+  const [sampulBg, setSampulBg] = useState();
+  const [imageProfile, setImageProfile] = useState();
   const [email, setEmail] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
-
   const [image, setImage] = useState(null);
+ 
   // camera usage
   const [type, setType] = useState(CameraType.back);
   const [permission, requestPermission] = Camera.useCameraPermissions();
@@ -58,6 +59,13 @@ const Index = () => {
     if (!result.canceled) {
       delete result.canceled;
       setImage(result?.assets[0]?.uri);
+      // Fetch gambar dan konversi ke blob
+      let response = await fetch(result.assets[0].uri);
+      let blob = await response.blob().then((data) => {
+        console.log(data.size);
+      });
+
+      // Lakukan sesuatu dengan objek blob
     }
   };
 
@@ -152,25 +160,32 @@ const Index = () => {
             <TextInput
               placeholder="Username"
               style={styles.inputText}
+              onChangeText={(v) => setUsername(v)}
             />
             <TextInput
               placeholder="Lokasi"
               style={styles.inputText}
+              onChangeText={(v) => setLokasi(v)}
             />
             <TextInput
               placeholder="Email"
               style={styles.inputText}
+              onChangeText={(v) => setEmail(v)}
             />
             <TextInput
               placeholder="Phone Number"
               style={styles.inputText}
+              onChangeText={(v) => setPhoneNumber(v)}
             />
             <TextInput
               placeholder="Bio"
               style={styles.inputTextarea}
+              onChangeText={(v) => setBio(v)}
             />
           </View>
-          <TouchableOpacity style={styles.button}>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={handleUpdateUser}>
             <Text style={{ color: 'white', fontWeight: '700' }}>Update</Text>
           </TouchableOpacity>
         </View>

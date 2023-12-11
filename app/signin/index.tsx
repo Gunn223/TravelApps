@@ -16,6 +16,9 @@ const index = () => {
     password: '',
   });
   // console.log(inputUser);
+  // console.log("email",email);
+  // console.log("pw",password);
+  // console.log(inputUser);
   // useEffect(() => {
   //   GetUser((data: []) => {
   //     if (data.length > 0) {
@@ -78,6 +81,7 @@ const index = () => {
     RouteHome();
   }, [data]);
   const handleLogin = async () => {
+    console.log('click');
     if (!email && !password) {
       setErrorMessage('Email and password are required');
     } else if (!email) {
