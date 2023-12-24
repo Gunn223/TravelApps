@@ -4,7 +4,6 @@ const methodOverride = require('method-override');
 const port = 9000;
 const cors = require('cors');
 
-
 // override with the X-HTTP-Method-Override header in the request
 app.use(methodOverride('X-HTTP-Method-Override'));
 app.use(express.urlencoded({ extended: true }));

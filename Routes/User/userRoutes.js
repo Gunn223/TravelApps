@@ -95,13 +95,11 @@ router.post('/addUser', async (req, res) => {
 router.put('/update/:id', (req, res) => {
   const id = req.params.id;
   const { username, lokasi, bio, sampul_bg, image_profile, email, phone_number } = req.body;
-  //   data dari body
 
   const query = `UPDATE users SET username = ?, lokasi = ?, bio = ?, sampul_bg = ?, image_profile = ?, email = ?, phone_number = ? WHERE id_user = ?`;
   db.query(query, [username, lokasi, bio, sampul_bg, image_profile, email, phone_number, id], (err, result) => {
     if (err) throw err;
-    const data = JSON.stringify(result);
-    res.send(data);
+    return res.status(200).json({ data: result });
   });
 });
 
