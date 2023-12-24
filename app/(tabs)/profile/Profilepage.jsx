@@ -12,8 +12,10 @@ const profilepage = () => {
       setItem(data || []);
     });
   }, []);
+  // file:///var/mobile/Containers/Data/Application/D03A7138-764D-4CF8-A5AA-B952E96DAF90/Documents/ExponentExperienceData/%2540anonymous%252FTravelApps-feab9623-70a5-4e55-a2ab-014094ada29d/images/image_1703161797419.jpg
 
   // buat id agar dinamis mengikuti user login
+  console.log(item.find((data) => data.id_user === 1));
   return (
     <View style={styles.container}>
       {item.length > 0 &&
@@ -21,7 +23,11 @@ const profilepage = () => {
           <View key={i}>
             <View style={styles.header}>
               <Image
-                source={{ uri: 'https://tse3.mm.bing.net/th?id=OIP.214MOj7GG9JPL0prZf_FNAHaEK&pid=Api&P=0&h=180' }}
+                source={{
+                  uri:
+                    data.sampul_bg ||
+                    'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8YmVhY2glMjBiYWNrZ3JvdW5kfGVufDB8fDB8fHww',
+                }}
                 style={{ width: '100%', height: '100%' }}
               />
 
@@ -75,7 +81,10 @@ const profilepage = () => {
                 <Image
                   style={styles.UserProfile}
                   source={{
-                    uri: 'https://w7.pngwing.com/pngs/178/595/png-transparent-user-profile-computer-icons-login-user-avatars-thumbnail.png',
+                    uri:
+                      data && data.image_profile
+                        ? data.image_profile
+                        : 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8YmVhY2glMjBiYWNrZ3JvdW5kfGVufDB8fDB8fHww',
                   }}
                 />
               </View>

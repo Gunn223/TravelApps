@@ -1,59 +1,63 @@
 import { StyleSheet, Text, View, TouchableOpacity, Image, ScrollView } from 'react-native';
-import { router } from 'expo-router';
-
-const trips = [
-  {
-    title: 'Open Trip Singapore',
-    date: '20 Desember 2023',
-    image:
-      'https://images.unsplash.com/photo-1565967511849-76a60a516170?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OHx8c2luZ2Fwb3JlfGVufDB8fDB8fHww',
-  },
-  {
-    title: 'Open Trip Malaysia',
-    date: '24 Desember 2023',
-    image:
-      'https://images.unsplash.com/photo-1545424436-1be2b5c0d0fc?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTB8fG1hbGF5c2lhfGVufDB8fDB8fHww', // replace with your actual image path
-  },
-  {
-    title: 'Open Trip Europe',
-    date: '4 Desember 2023',
-    image:
-      'https://images.unsplash.com/photo-1621765628059-fd3c9d2fa4fd?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8ZXJvdXBlfGVufDB8fDB8fHww', // replace with your actual image path
-  },
-  // Add more trips as needed
-];
-
-const handleDetailPress = () => {
-  router.replace('/detail'); // Replace 'Detail' with your actual route name and pass appropriate params
-};
+import { Link, router } from 'expo-router';
+import { useEffect, useState } from 'react';
+import { GetDestination } from '../../../services/GetData';
 
 const index = () => {
+  const [data, setData] = useState([]);
+
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const data = await GetDestination();
+        if (data && data.length > 0) {
+          setData(data);
+        }
+      } catch (error) {
+        console.log('err destination get data', error);
+      }
+    };
+    loadData();
+  }, []);
+
   return (
-    <View style={styles.container}>
-      <Image
-        source={require('../../../assets/images/logo.png')}
-        style={styles.logo}
-      />
-      <ScrollView style={styles.scrollContainer}>
-        {trips.map((trip, index) => (
-          <View
-            key={index}
-            style={styles.card}>
-            <Image
-              source={{ uri: trip.image }}
-              style={styles.cardImage}
-            />
-            <Text style={styles.cardTitle}>{trip.title}</Text>
-            <Text style={styles.cardDate}>{trip.date}</Text>
-            <TouchableOpacity
-              style={styles.detailButton}
-              onPress={handleDetailPress}>
-              <Text style={styles.detailText}>Detail Paket</Text>
-            </TouchableOpacity>
-          </View>
-        ))}
-      </ScrollView>
-    </View>
+    <>
+      <View style={styles.container}>
+        <Image
+          source={require('../../../assets/images/logo.png')}
+          style={styles.logo}
+        />
+        <ScrollView style={styles.scrollContainer}>
+          {data.length > 0 &&
+            data.map((item, index) => (
+              <View
+                key={index}
+                style={styles.card}>
+                <Image
+                  source={{ uri: item.image }}
+                  style={styles.cardImage}
+                />
+                <View
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                  }}>
+                  <Text style={styles.cardTitle}>{item.title}</Text>
+                  {/* <Text style={{ marginHorizontal: 5, borderBlockColor: 'black', height: 20 }}>|</Text> */}
+                  <Text style={styles.cardTitle}>{item.date}</Text>
+                </View>
+                <Link
+                  href={`/detail?id=${item.id_destination}`}
+                  style={styles.detailButton}>
+                  <Text style={styles.detailText}>Detail Paket</Text>
+                </Link>
+              </View>
+            ))}
+        </ScrollView>
+      </View>
+    </>
   );
 };
 
@@ -84,7 +88,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   cardTitle: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: 'bold',
     marginTop: 10,
   },
@@ -103,6 +107,7 @@ const styles = StyleSheet.create({
   detailText: {
     color: '#fff',
     fontWeight: 'bold',
+    textAlign: 'center',
   },
   cardSubtitle: {
     fontSize: 16,

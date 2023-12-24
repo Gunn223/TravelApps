@@ -16,8 +16,10 @@ export const Register = async (data = {}) => {
       username: data.username || 'default',
       lokasi: data.lokasi || 'Default',
       bio: data.bio || 'Default',
-      sampul_bg: data.sampul_bg || 'default',
-      image_profile: data.image_profile || 'default',
+      sampul_bg:
+        'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8YmVhY2glMjBiYWNrZ3JvdW5kfGVufDB8fDB8fHww',
+      image_profile:
+        'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8YmVhY2glMjBiYWNrZ3JvdW5kfGVufDB8fDB8fHww',
       email: data.email || 'Default',
       phone_number: data.phone_number || '00000',
       password: data.password || 'default',
@@ -30,25 +32,27 @@ export const Register = async (data = {}) => {
   }
 };
 
-export const UpdateUser = async (id, data) => {
+export const UpdateUser = async (data) => {
   try {
+    const Iduser = await AsyncStorage.getItem('id');
+
     const options = {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      url: `${tunel}/users/update/${id}`,
+      Headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      url: `${tunel}/users/update/${Iduser}`,
     };
     const requestData = qs.stringify({
-      username: data.username || 'default',
-      lokasi: data.lokasi || 'Default',
-      bio: data.bio || 'Default',
-      sampul_bg: data.sampul_bg || 'default',
-      image_profile: data.image_profile || 'default',
-      email: data.email || 'Default',
-      phone_number: data.phone_number || '00000',
-      password: data.password || 'default',
+      username: data.username || 'anonymous',
+      lokasi: data.lokasi || '--ubah ke lokasi anda--',
+      bio: data.bio || '--ubah ke bio anda--',
+      sampul_bg: data.sampul_bg || 'sample image',
+      image_profile: data.image_profile || 'sample image',
+      email: data.email,
+      phone_number: data.phone_number || '085xxxxxxxx',
+      password: data.password,
     });
 
-    const res = await axios.post(options.url, requestData, options);
+    const res = await axios.put(options.url, requestData, options);
 
     return res.data;
   } catch (error) {
@@ -63,7 +67,7 @@ export const Login = async (userData, errMessage) => {
     // terdapat bug 2 kali click baru data bisa login
     const options = {
       method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, // Change content type
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       url: `${tunel}/users/login`,
     };
     const data = qs.stringify({
@@ -77,6 +81,23 @@ export const Login = async (userData, errMessage) => {
   } catch (error) {
     errMessage(error);
   }
+};
+
+export const addBooking = async (item) => {
+  const options = {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    url: `${tunel}/booking/addBooking`,
+  };
+  const data = qs.stringify({
+    date_boking: item.date_boking,
+    status_destination: 'boking', //default value
+    destination_id: item.destination_id,
+    user_id: await AsyncStorage.getItem('id'),
+  });
+  const res = await axios.post(options.url, data, options);
+
+  return res.data;
 };
 
 export const Iduser = AsyncStorage.getItem('id');
