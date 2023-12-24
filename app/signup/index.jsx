@@ -73,12 +73,14 @@ const index = () => {
 
       <TextInput
         placeholder="Username"
+        placeholderTextColor={'#ccc'}
         style={styles.input}
         onChangeText={(text) => setUsername(text)}
       />
 
       <TextInput
         placeholder="Email"
+        placeholderTextColor={'#ccc'}
         style={styles.input}
         onChangeText={(text) => setEmail(text)}
       />
@@ -86,6 +88,7 @@ const index = () => {
       <View style={styles.passwordInput}>
         <TextInput
           placeholder="Password"
+          placeholderTextColor={'#ccc'}
           secureTextEntry={!showPassword}
           style={styles.passwordTextInput}
           onChangeText={(text) => setPassword(text)}
@@ -145,14 +148,14 @@ const styles = StyleSheet.create({
     padding: 10,
     marginVertical: 8,
     borderWidth: 1,
-    borderRadius: 8,
-    borderColor: '#ccc',
+    borderRadius: 20,
+    borderColor: '#000000',
   },
   submitButton: {
     width: '100%',
     padding: 12,
     backgroundColor: 'red',
-    borderRadius: 8,
+    borderRadius: 20,
     alignItems: 'center',
     marginTop: 20,
   },
@@ -171,6 +174,7 @@ const styles = StyleSheet.create({
   },
   loginText: {
     fontSize: 14,
+    marginTop: 20,
   },
   loginLink: {
     color: 'blue',
@@ -190,8 +194,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1,
-    borderRadius: 8,
-    borderColor: '#ccc',
+    borderRadius: 20,
+    borderColor: '#000',
     marginTop: 8,
     paddingHorizontal: 10,
   },

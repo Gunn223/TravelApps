@@ -3,20 +3,24 @@ import { createSlice } from '@reduxjs/toolkit';
 const registerSlice = createSlice({
   name: 'register',
   initialState: {
-    data: {
-      username: '',
-      password: '',
-      email: '',
-    },
+    data: [
+      {
+        name: 'jhon',
+        age: 12,
+      },
+    ],
   },
   reducers: {
     registerReducer: (state, action) => {
       const findData = state.data.find((data) => data.username === action.payload.username);
-      console.log('Register slices', findData);
-      // if () {
-      // } else {
-      state.data.push(action.payload);
-      // }
+
+      if (findData) {
+        // Handle kasus ketika username sudah ada
+        console.log('Username sudah terdaftar:', action.payload.username);
+      } else {
+        // Tambahkan pengguna ke dalam array
+        state.data.push(action.payload);
+      }
     },
   },
 });

@@ -4,44 +4,95 @@ import { Link, router } from 'expo-router';
 import { GetUser } from '../../services/GetData';
 import { useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Login } from '../../services/PostData';
 const index = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [data, setData] = useState([]);
+  const [data, setData] = useState<any[]>([]);
+  const [inputUser, SetinputUser] = useState({
+    email: '',
+    password: '',
+  });
+  // console.log(inputUser);
+  // console.log("email",email);
+  // console.log("pw",password);
+  // console.log(inputUser);
+  // useEffect(() => {
+  //   GetUser((data: []) => {
+  //     if (data.length > 0) {
+  //       setData(data);
+  //     }
+  //   });
+  // }, []);
 
+  // console.log(data);
   useEffect(() => {
-    GetUser((data: []) => {
-      if (data.length > 0) {
-        setData(data);
+    const LoginUser = async () => {
+      try {
+        const DataLogin = await Login(inputUser, (errorMessage: any) => {
+          if (errorMessage) {
+            // setErrorMessage(errorMessage.message);
+            // kondisi terlihat sebelumdi eksekusi
+            // handle login error
+          }
+        });
+        setData(DataLogin);
+      } catch (error) {
+        console.log('login err', error);
       }
-    });
-  }, []);
+    };
+    // perlu 2 kali click login baru bisa masuk menu utama ?
+    LoginUser();
+  }, [inputUser]);
+  useEffect(() => {
+    const SesionCek = async () => {
+      try {
+        const sesion = await AsyncStorage.getItem('token');
 
+        // Konversi durasi ke milidetik (ms)
+        const durationInDays = 3;
+        const durationInMilliseconds = durationInDays * 24 * 60 * 60 * 1000;
+        if (sesion) {
+          router.replace('/(tabs)/home');
+          setTimeout(() => {
+            AsyncStorage.removeItem('token');
+            AsyncStorage.removeItem('id');
+            console.log('Token and id removed after 3 days');
+          }, durationInMilliseconds);
+        }
+      } catch (error) {
+        console.log('Error di session', error);
+      }
+    };
+    SesionCek();
+    // membuat sesi yang  di gunkaan untuk login
+  }, []);
+  useEffect(() => {
+    const RouteHome = async () => {
+      if (data && data.length > 0) {
+        const { token, user } = data[0];
+        await AsyncStorage.setItem('token', token);
+        await AsyncStorage.setItem('id', user.id_user.toString());
+        router.replace('/(tabs)/home');
+      }
+    };
+    RouteHome();
+  }, [data]);
   const handleLogin = async () => {
-    // Lakukan validasi input email dan password di sini
     if (!email && !password) {
-      // Jika tidak ada email dan password
       setErrorMessage('Email and password are required');
     } else if (!email) {
-      // Jika tidak ada email
       setErrorMessage('Email is required');
     } else if (!password) {
-      // Jika tidak ada password
       setErrorMessage('Password is required');
     }
-    data ? console.log(data) : [];
-    const item: any = data.find(
-      (user: { email: string; password: string }) => user.email === email && user.password === password,
-    );
 
-    if (item.email === email && item.password === password) {
-      const setIduser = item.id_user.toString();
-      console.log(setIduser);
-      AsyncStorage.setItem('id', setIduser);
-      router.replace('/(tabs)/home');
-    }
+    SetinputUser({
+      email: email,
+      password: password,
+    });
 
     // Atur timeout untuk menghilangkan pesan kesalahan setelah 2 detik
     setTimeout(() => {
@@ -64,6 +115,7 @@ const index = () => {
 
       <TextInput
         placeholder="Email"
+        placeholderTextColor={'#CCC'}
         style={styles.input}
         onChangeText={(text) => setEmail(text)}
       />
@@ -71,6 +123,7 @@ const index = () => {
       <View style={styles.passwordInput}>
         <TextInput
           placeholder="Password"
+          placeholderTextColor={'#CCC'}
           secureTextEntry={!showPassword}
           style={styles.passwordTextInput}
           onChangeText={(text) => setPassword(text)}
@@ -130,14 +183,14 @@ const styles = StyleSheet.create({
     padding: 10,
     marginVertical: 8,
     borderWidth: 1,
-    borderRadius: 8,
-    borderColor: '#ccc',
+    borderRadius: 20,
+    borderColor: '#000000',
   },
   submitButton: {
     width: '100%',
     padding: 12,
     backgroundColor: 'red',
-    borderRadius: 8,
+    borderRadius: 20,
     alignItems: 'center',
     marginTop: 20,
   },
@@ -156,6 +209,7 @@ const styles = StyleSheet.create({
   },
   loginText: {
     fontSize: 14,
+    marginTop: 20,
   },
   loginLink: {
     color: 'blue',
@@ -175,10 +229,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1,
-    borderRadius: 8,
-    borderColor: '#ccc',
+
     marginTop: 8,
     paddingHorizontal: 10,
+    borderRadius: 20,
+    borderColor: '#000000',
   },
   passwordTextInput: {
     flex: 1,

@@ -1,9 +1,19 @@
 import { StyleSheet, Text, View, TouchableOpacity, Image, ScrollView, BackHandler, Alert } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 import React, { useEffect } from 'react';
-import { Link, router } from 'expo-router';
-
+import { Link, router, useLocalSearchParams } from 'expo-router';
+import { GetDestinationbyId } from '../../services/GetData';
+import { addBooking } from '../../services/PostData';
 const index = () => {
+  const { id } = useLocalSearchParams();
+  const [data, setData] = React.useState([]);
+  useEffect(() => {
+    GetDestinationbyId(id, (data) => {
+      if (data && data.length > 0) {
+        setData(data);
+      }
+    });
+  }, [id]);
   useEffect(() => {
     const backAction = () => {
       router.replace('/(tabs)/home');
@@ -14,6 +24,23 @@ const index = () => {
 
     return () => backHandler.remove(); // Don't forget to remove the listener
   });
+  const handleBooking = async () => {
+    try {
+      const findDate = data[0]['date'];
+
+      console.log(findDate);
+      const item = {
+        date_boking: findDate,
+        // status_destination: 'boking',
+        destination_id: id,
+      };
+      const result = await addBooking(item);
+      console.log(result);
+      // gunakan untuk menambahka event handler
+    } catch (error) {
+      console.log('error from add boking', error);
+    }
+  };
 
   // useEffect(() => {
   //   const backAction = () => {
@@ -37,71 +64,114 @@ const index = () => {
   // }, []);
 
   return (
-    <View style={styles.container}>
-      <View style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'row' }}>
-        <Link
-          style={{ flex: 1 }}
-          href="/(tabs)/home">
-          <FontAwesome
-            name="arrow-left"
-            size={24}
-            color="black"
-          />
-        </Link>
-        <Image
-          source={require('../../assets/images/logo.png')}
-          style={styles.logo}
-        />
-        <View style={{ flex: 1 }}></View>
-        {/* biar di tengah */}
-      </View>
-      <ScrollView style={styles.scrollContainer}>
-        <Image
-          source={require('../../assets/images/3.png')} // replace with your actual image path
-          style={styles.image}
-        />
-        <View style={styles.content}>
-          <Text style={styles.title}>Open Trip Singapore</Text>
-          <Text style={styles.seats}>Sisa Kuota : 30</Text>
-          <Text style={styles.titleprice}>Start From</Text>
-          <Text style={styles.price}>IDR. 4.000.000</Text>
-
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Itinerary</Text>
-            <View style={styles.dateContainer}>
-              <Text style={styles.dateText}>20 - 23 Desember 2023</Text>
-            </View>
-            <Text style={styles.itineraryText}>
-              Marina Bay Sands - The Shoppes at Marina Bay Sands - SkyPark Observation Deck - Gardens by the Bay
-              (termasuk Flower Dome dan Cloud Forest) - Supertree Grove - Pantai di Sentosa Island - Madame Tussauds
-              Singapore - Resorts World Sentosa - Universal Studios Singapore - Chinatown (termasuk Buddha Tooth Relic
-              Temple) - Little India - Orchard Road - Night Safari (optional)
-            </Text>
-          </View>
-
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Fasilitas</Text>
-            <Text style={styles.facilityText}>1. Akomodasi</Text>
-            <Text style={styles.facilityText}>2. Transportasi</Text>
-            <Text style={styles.facilityText}>3. Makan</Text>
-            <Text style={styles.facilityText}>4. Tiket Wisata</Text>
-            <Text style={styles.facilityText}>5. Tour Guide & Tour Leader</Text>
-            <Text style={styles.facilityText}>6. Asuransi Perjalanan</Text>
-          </View>
-          <TouchableOpacity style={styles.detailButton}>
-            <Text style={styles.detailButtonText}>Detail Paket</Text>
+    <>
+      <View style={styles.container}>
+        <View style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'row' }}>
+          <Link
+            style={{ flex: 1 }}
+            href="/(tabs)/home">
             <FontAwesome
-              name="download"
-              size={20}
-              color="white"
+              name="arrow-left"
+              size={24}
+              color="black"
             />
-          </TouchableOpacity>
+          </Link>
+          <Image
+            source={require('../../assets/images/logo.png')}
+            style={styles.logo}
+          />
+          <View style={{ flex: 1 }}></View>
+          {/* biar di tengah */}
         </View>
-      </ScrollView>
-      <TouchableOpacity style={styles.bookingButton}>
-        <Text style={styles.bookingButtonText}>Booking</Text>
-      </TouchableOpacity>
-    </View>
+        {data.length > 0 &&
+          data.map((item, index) => (
+            <View key={index}>
+              <ScrollView>
+                <Image
+                  source={{
+                    uri:
+                      item.image ||
+                      'https://images.unsplash.com/photo-1565967511849-76a60a516170?q=80&w=1471&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+                  }} // replace with your actual image path
+                  style={styles.image}
+                />
+                <View style={styles.content}>
+                  <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Text style={styles.title}>{item.title}</Text>
+                    <Text style={styles.seats}>Sisa Kuota : {item.kuota}</Text>
+                  </View>
+                  <Text style={styles.titleprice}>Start From</Text>
+                  <Text style={styles.price}>IDR. {item.price.toLocaleString('id-ID')}</Text>
+
+                  <View style={styles.section}>
+                    <View style={{ display: 'flex', flexDirection: 'row', columnGap: 20, marginTop: 20 }}>
+                      <Text
+                        style={{
+                          fontWeight: '600',
+                          fontSize: 16,
+                          paddingHorizontal: 10,
+                          paddingVertical: 5,
+                          backgroundColor: '#ccc',
+                        }}>
+                        Itinerary
+                      </Text>
+                      <Text
+                        style={{
+                          fontWeight: '600',
+                          fontSize: 16,
+                          paddingHorizontal: 10,
+                          paddingVertical: 5,
+                          backgroundColor: 'red',
+                          color: 'white',
+                        }}>
+                        {item.date}
+                      </Text>
+                    </View>
+                    <View style={styles.dateContainer}>
+                      <Text style={styles.dateText}>{item.date}</Text>
+                      <Text style={styles.itineraryText}>{item.description}</Text>
+                    </View>
+                  </View>
+
+                  <View style={styles.section}>
+                    <Text
+                      style={{
+                        fontWeight: '600',
+                        fontSize: 16,
+                        paddingHorizontal: 10,
+                        paddingVertical: 5,
+                        backgroundColor: '#ccc',
+                        maxWidth: '26%',
+                        marginBottom: 20,
+                      }}>
+                      Fasilitas
+                    </Text>
+                    <Text style={styles.facilityText}>1. {item.facilities}</Text>
+                    <Text style={styles.facilityText}>2. Transportasi</Text>
+                    <Text style={styles.facilityText}>3. Makan</Text>
+                    <Text style={styles.facilityText}>4. Tiket Wisata</Text>
+                    <Text style={styles.facilityText}>5. Tour Guide & Tour Leader</Text>
+                    <Text style={styles.facilityText}>6. Asuransi Perjalanan</Text>
+                  </View>
+                  <TouchableOpacity style={styles.detailButton}>
+                    <Text style={styles.detailButtonText}>Detail Paket</Text>
+                    <FontAwesome
+                      name="download"
+                      size={20}
+                      color="white"
+                    />
+                  </TouchableOpacity>
+                </View>
+              </ScrollView>
+              <TouchableOpacity
+                style={styles.bookingButton}
+                onPress={handleBooking}>
+                <Text style={styles.bookingButtonText}>Booking</Text>
+              </TouchableOpacity>
+            </View>
+          ))}
+      </View>
+    </>
   );
 };
 
@@ -123,6 +193,7 @@ const styles = StyleSheet.create({
   image: {
     width: '100%',
     height: 200,
+    borderRadius: 10,
   },
   content: {
     padding: 16,
@@ -138,10 +209,8 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   titleprice: {
-    marginTop: 7,
-    fontSize: 16,
-    marginTop: 4,
-    fontWeight: 'bold',
+    fontSize: 15,
+    marginTop: 20,
   },
   price: {
     fontSize: 22,
@@ -150,7 +219,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   section: {
-    marginTop: 16,
+    marginTop: 0,
   },
   sectionTitle: {
     fontSize: 18,
@@ -158,7 +227,6 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   dateContainer: {
-    backgroundColor: 'red',
     alignSelf: 'flex-start',
     paddingHorizontal: 8,
     paddingVertical: 4,
@@ -182,7 +250,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     borderRadius: 6,
     alignItems: 'center',
-    marginTop: 16,
+    position: 'absolute',
+    bottom: 30,
+    right: 0,
+    left: 0,
   },
   bookingButtonText: {
     color: '#fff',
