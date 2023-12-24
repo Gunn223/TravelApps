@@ -1,18 +1,39 @@
-import { StyleSheet, Text, View, TouchableOpacity, Image, ScrollView, BackHandler, Alert } from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+  Image,
+  ScrollView,
+  BackHandler,
+  ActivityIndicator,
+  Alert,
+} from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, router, useLocalSearchParams } from 'expo-router';
 import { GetDestinationbyId } from '../../services/GetData';
 import { addBooking } from '../../services/PostData';
 const index = () => {
   const { id } = useLocalSearchParams();
   const [data, setData] = React.useState([]);
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
-    GetDestinationbyId(id, (data) => {
-      if (data && data.length > 0) {
-        setData(data);
+    const loaddata = async () => {
+      try {
+        await GetDestinationbyId(id, (data) => {
+          if (data && data.length > 0) {
+            setData(data);
+          }
+        });
+      } catch (error) {
+        console.log('error from get data', error);
+      } finally {
+        setLoading(false);
       }
-    });
+    };
+    loaddata();
   }, [id]);
   useEffect(() => {
     const backAction = () => {
@@ -28,17 +49,34 @@ const index = () => {
     try {
       const findDate = data[0]['date'];
 
-      console.log(findDate);
       const item = {
         date_boking: findDate,
-        // status_destination: 'boking',
         destination_id: id,
       };
-      const result = await addBooking(item);
-      console.log(result);
-      // gunakan untuk menambahka event handler
+
+      // Menampilkan konfirmasi sebelum booking
+      Alert.alert('Konfirmasi Booking', 'Anda yakin ingin melakukan booking?', [
+        {
+          text: 'Batal',
+          style: 'cancel',
+        },
+        {
+          text: 'Ya',
+          onPress: async () => {
+            // Lakukan booking jika pengguna menekan tombol 'Ya'
+            const result = await addBooking(item);
+
+            // Tampilkan pesan berhasil atau gagal, sesuai dengan respons dari addBooking
+            if (result) {
+              Alert.alert('Booking Berhasil', 'Terima kasih! Booking Anda telah berhasil.');
+            } else {
+              Alert.alert('Booking Gagal', 'Maaf, terjadi kesalahan saat melakukan booking. Silakan coba lagi.');
+            }
+          },
+        },
+      ]);
     } catch (error) {
-      console.log('error from add boking', error);
+      console.log('error from add booking', error);
     }
   };
 
@@ -83,10 +121,21 @@ const index = () => {
           <View style={{ flex: 1 }}></View>
           {/* biar di tengah */}
         </View>
-        {data.length > 0 &&
+        {loading ? (
+          <ActivityIndicator
+            style={styles.loading}
+            size="large"
+            color="#0000ff"
+          />
+        ) : (
+          data.length > 0 &&
           data.map((item, index) => (
             <View key={index}>
-              <ScrollView>
+              <ScrollView
+                showsVerticalScrollIndicator={false}
+                style={{
+                  marginVertical: 70,
+                }}>
                 <Image
                   source={{
                     uri:
@@ -169,7 +218,8 @@ const index = () => {
                 <Text style={styles.bookingButtonText}>Booking</Text>
               </TouchableOpacity>
             </View>
-          ))}
+          ))
+        )}
       </View>
     </>
   );

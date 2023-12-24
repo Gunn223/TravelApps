@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, TextInput, Button, Alert } from 'react-native';
+import { StyleSheet, Text, View, TextInput, Alert } from 'react-native';
+import { Picker } from '@react-native-picker/picker';
 import * as ImagePicker from 'expo-image-picker';
 import * as FileSystem from 'expo-file-system';
 import { Image } from 'react-native';
@@ -12,14 +13,15 @@ import { Camera, CameraType } from 'expo-camera';
 import { GetUserbyId } from '../../services/GetData';
 const Index = () => {
   const [username, setUsername] = useState('');
-  const [lokasi, setLokasi] = useState('');
   const [bio, setBio] = useState('');
   const [sampulBg, setSampulBg] = useState(null);
   const [imageProfile, setImageProfile] = useState(null);
   const [email, setEmail] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [item, setItem] = useState([]);
-  console.log(username);
+  const [inputHeight, setInputHeight] = useState(0);
+  const [SelectedLokasi, SetSelectedLokasi] = useState('');
+
   useEffect(() => {
     GetUserbyId((data) => {
       setItem(data || []);
@@ -27,7 +29,7 @@ const Index = () => {
         try {
           const res = await data;
           setUsername(res[0].username);
-          setLokasi(res[0].lokasi);
+          SetSelectedLokasi(res[0].lokasi);
           setBio(res[0].bio);
           setSampulBg(res[0].sampul_bg);
           setImageProfile(res[0].image_profile);
@@ -141,14 +143,27 @@ const Index = () => {
   const handleUpdateUser = () => {
     const data = {
       username: username,
-      lokasi: lokasi,
+      lokasi: SelectedLokasi,
       bio: bio,
       sampul_bg: sampulBg,
       image_profile: imageProfile,
       email: email,
       phone_number: phoneNumber,
     };
-    UpdateUser(data);
+    // Menampilkan alert konfirmasi
+    Alert.alert('Konfirmasi', 'Apakah Anda yakin ingin mengupdate data?', [
+      {
+        text: 'Batal',
+        style: 'cancel',
+      },
+      {
+        text: 'Ya',
+        onPress: () => {
+          UpdateUser(data);
+          router.push('/(tabs)/profile/Profilepage');
+        },
+      },
+    ]);
   };
   function toggleCameraType() {
     setType((current) => (current === CameraType.back ? CameraType.front : CameraType.back));
@@ -229,34 +244,73 @@ const Index = () => {
               </View>
               <View style={{ marginTop: 30 }}>
                 <TextInput
+                  placeholderTextColor={'#000000'}
+                  maxLength={20}
                   placeholder="Username"
                   style={styles.inputText}
-                  onChangeText={(v) => setUsername(v)}
+                  onChangeText={(v) => {
+                    // Add validation to limit the input to a maximum of 20 characters
+                    if (v.length <= 20) {
+                      setUsername(v);
+                    }
+                  }}
                   value={username}
                 />
+
                 <TextInput
-                  placeholder="Lokasi"
+                  placeholderTextColor={'#000000'}
+                  placeholder="City"
                   style={styles.inputText}
-                  onChangeText={(v) => setLokasi(v)}
-                  value={lokasi}
+                  onChangeText={(v) => {
+                    if (v.length <= 19) {
+                      SetSelectedLokasi(v);
+                    }
+                  }}
+                  maxLength={19}
+                  value={SelectedLokasi}
                 />
                 <TextInput
+                  placeholderTextColor={'#000000'}
                   placeholder="Email"
                   style={styles.inputText}
-                  onChangeText={(v) => setEmail(v)}
+                  onChangeText={(v) => {
+                    if (v.length <= 30) {
+                      setEmail(v);
+                    }
+                  }}
+                  maxLength={30}
                   value={email}
                 />
                 <TextInput
+                  placeholderTextColor={'#000000'}
                   placeholder="Phone Number"
                   style={styles.inputText}
-                  onChangeText={(v) => setPhoneNumber(v)}
+                  onChangeText={(v) => {
+                    if (v.length <= 15) {
+                      setPhoneNumber(v);
+                    }
+                  }}
+                  maxLength={15}
                   value={phoneNumber}
                 />
                 <TextInput
+                  placeholderTextColor={'#000000'}
                   placeholder="Bio"
-                  style={styles.inputTextarea}
-                  onChangeText={(v) => setBio(v)}
+                  style={[styles.inputTextarea, { height: Math.max(20, inputHeight) }]}
+                  onChangeText={(v) => {
+                    if (v.length <= 80) {
+                      setBio(v);
+                      // Update the height of the TextInput based on content
+                      setInputHeight(Math.max(20, inputHeight));
+                    }
+                  }}
                   value={bio}
+                  maxLength={80}
+                  multiline={true}
+                  onContentSizeChange={(e) => {
+                    // Update the height of the TextInput based on content size
+                    setInputHeight(Math.max(20, e.nativeEvent.contentSize.height));
+                  }}
                 />
               </View>
               <TouchableOpacity

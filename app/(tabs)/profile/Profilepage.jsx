@@ -1,5 +1,5 @@
 import { StyleSheet, TouchableOpacity, View, Image, Text, ScrollView } from 'react-native';
-import { MaterialCommunityIcons, AntDesign, Entypo, FontAwesome5 } from '@expo/vector-icons';
+import { MaterialCommunityIcons, AntDesign, Entypo, FontAwesome5, FontAwesome } from '@expo/vector-icons';
 import { GetUser, GetUserbyId } from '../../../services/GetData';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useEffect, useState } from 'react';
@@ -7,15 +7,29 @@ import { Link, router } from 'expo-router';
 
 const profilepage = () => {
   const [item, setItem] = useState([]);
-  useEffect(() => {
-    GetUserbyId((data) => {
-      setItem(data || []);
-    });
-  }, []);
-  // file:///var/mobile/Containers/Data/Application/D03A7138-764D-4CF8-A5AA-B952E96DAF90/Documents/ExponentExperienceData/%2540anonymous%252FTravelApps-feab9623-70a5-4e55-a2ab-014094ada29d/images/image_1703161797419.jpg
+  const [reloadData, setReloadData] = useState(true);
 
-  // buat id agar dinamis mengikuti user login
-  console.log(item.find((data) => data.id_user === 1));
+  // Fungsi untuk memuat data
+  const loadData = async () => {
+    try {
+      await GetUserbyId((data) => {
+        setItem(data || []);
+      });
+    } catch (error) {
+      console.log('Err from load data profile Page', error);
+    }
+  };
+
+  // Panggil loadData saat komponen pertama kali dimount dan setiap kali 'reloadData' berubah
+  useEffect(() => {
+    if (reloadData) {
+      loadData();
+      // Setelah loadData dipanggil, atur kembali reloadData menjadi false
+      setReloadData(false);
+    }
+    setReloadData(true);
+  }, [reloadData]);
+  console.log(reloadData);
   return (
     <View style={styles.container}>
       {item.length > 0 &&
@@ -41,21 +55,6 @@ const profilepage = () => {
                   top: 36,
                   paddingHorizontal: 16,
                 }}>
-                {/* <TouchableOpacity
-            style={{
-              width: 30,
-              height: 30,
-              backgroundColor: 'white',
-              borderRadius: 50,
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}>
-            <AntDesign
-              name="arrowleft"
-              size={24}
-              color="black"
-            />
-          </TouchableOpacity> */}
                 <View></View>
 
                 <TouchableOpacity
@@ -109,25 +108,27 @@ const profilepage = () => {
                       payment details
                     </Text>
                   </TouchableOpacity> */}
-
-                  <Link
+                  <TouchableOpacity
                     style={{ flex: 1, flexDirection: 'row', paddingVertical: 16 }}
-                    href={'/(tabs)/home/History'}>
-                    <Entypo
-                      name="users"
-                      color="#e74c3c"
+                    onPress={() => router.replace('/(tabs)/home/History')}>
+                    <FontAwesome
+                      name="history"
                       size={24}
+                      color="#e74c3c"
                     />
                     <Text
                       style={{
+                        marginStart: 16,
                         fontSize: 16,
                         fontWeight: '500',
                         lineHeight: 24,
                       }}>
                       History
                     </Text>
-                  </Link>
-                  <TouchableOpacity style={{ flex: 1, flexDirection: 'row', paddingVertical: 16 }}>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={{ flex: 1, flexDirection: 'row', paddingVertical: 16 }}
+                    onPress={() => router.replace('/(tabs)/home/Setting')}>
                     <AntDesign
                       name="setting"
                       color="#e74c3c"

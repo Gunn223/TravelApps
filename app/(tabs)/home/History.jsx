@@ -1,11 +1,13 @@
-import { Button, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import React, { useEffect, useState } from 'react';
+import { View, Image, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { GetHistorybyIdUser } from '../../../services/GetData';
 import { Link } from 'expo-router';
 
 const History = () => {
   const [data, setData] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+
   useEffect(() => {
     const loadData = async () => {
       try {
@@ -13,10 +15,14 @@ const History = () => {
         setData(res);
       } catch (error) {
         console.log('err from load data history', error);
+      } finally {
+        setIsLoading(false); // Setelah data diambil, atur isLoading menjadi false
       }
     };
+
     loadData();
   }, []);
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -25,8 +31,15 @@ const History = () => {
       </View>
       {/* body/card */}
 
-      <ScrollView style={{}}>
-        {data.length > 0 ? (
+      <ScrollView style={{ marginBottom: 120 }}>
+        {isLoading ? (
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator
+              size="large"
+              color="#0000ff"
+            />
+          </View>
+        ) : data.length > 0 ? (
           data.map((item, index) => (
             <View
               key={index}
@@ -69,8 +82,6 @@ const History = () => {
   );
 };
 
-export default History;
-
 const styles = StyleSheet.create({
   container: {
     marginHorizontal: 33,
@@ -100,4 +111,11 @@ const styles = StyleSheet.create({
     fontWeight: '400',
     fontSize: 14,
   },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 });
+
+export default History;

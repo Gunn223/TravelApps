@@ -1,17 +1,19 @@
-import { StyleSheet, Text, View, TouchableOpacity, Image, ScrollView } from 'react-native';
-import { Link, router } from 'expo-router';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { StyleSheet, Text, View, Image, ScrollView, Animated } from 'react-native';
+import { Link } from 'expo-router';
 import { GetDestination } from '../../../services/GetData';
 
-const index = () => {
+const Index = () => {
   const [data, setData] = useState([]);
+  const [fadeAnim] = useState(new Animated.Value(0));
 
   useEffect(() => {
     const loadData = async () => {
       try {
-        const data = await GetDestination();
-        if (data && data.length > 0) {
-          setData(data);
+        const destinationData = await GetDestination();
+        if (destinationData && destinationData.length > 0) {
+          setData(destinationData);
+          animateFadeIn(); // Panggil fungsi animateFadeIn setelah data diambil
         }
       } catch (error) {
         console.log('err destination get data', error);
@@ -20,48 +22,50 @@ const index = () => {
     loadData();
   }, []);
 
+  const animateFadeIn = () => {
+    Animated.timing(fadeAnim, {
+      toValue: 1,
+      duration: 1000, // Durasi animasi dalam milidetik
+      useNativeDriver: true,
+    }).start();
+  };
+
   return (
-    <>
-      <View style={styles.container}>
-        <Image
-          source={require('../../../assets/images/logo.png')}
-          style={styles.logo}
-        />
-        <ScrollView style={styles.scrollContainer}>
-          {data.length > 0 &&
-            data.map((item, index) => (
-              <View
-                key={index}
-                style={styles.card}>
-                <Image
-                  source={{ uri: item.image }}
-                  style={styles.cardImage}
-                />
-                <View
-                  style={{
-                    display: 'flex',
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                  }}>
-                  <Text style={styles.cardTitle}>{item.title}</Text>
-                  {/* <Text style={{ marginHorizontal: 5, borderBlockColor: 'black', height: 20 }}>|</Text> */}
-                  <Text style={styles.cardTitle}>{item.date}</Text>
-                </View>
-                <Link
-                  href={`/detail?id=${item.id_destination}`}
-                  style={styles.detailButton}>
-                  <Text style={styles.detailText}>Detail Paket</Text>
-                </Link>
-              </View>
-            ))}
-        </ScrollView>
-      </View>
-    </>
+    <View style={styles.container}>
+      <Image
+        source={require('../../../assets/images/logo.png')}
+        style={styles.logo}
+      />
+      <ScrollView style={styles.scrollContainer}>
+        {data.map((item, index) => (
+          <Animated.View
+            key={index}
+            style={{ ...styles.card, opacity: fadeAnim }}>
+            <Image
+              source={{ uri: item.image }}
+              style={styles.cardImage}
+            />
+            <View
+              style={{
+                display: 'flex',
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}>
+              <Text style={styles.cardTitle}>{item.title}</Text>
+              <Text style={styles.cardTitle}>{item.date}</Text>
+            </View>
+            <Link
+              href={`/detail?id=${item.id_destination}`}
+              style={styles.detailButton}>
+              <Text style={styles.detailText}>Detail Paket</Text>
+            </Link>
+          </Animated.View>
+        ))}
+      </ScrollView>
+    </View>
   );
 };
-
-export default index;
 
 const styles = StyleSheet.create({
   container: {
@@ -92,11 +96,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginTop: 10,
   },
-  cardDate: {
-    fontSize: 16,
-    color: 'grey',
-    marginTop: 5,
-  },
   detailButton: {
     backgroundColor: 'red',
     padding: 10,
@@ -109,12 +108,9 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
   },
-  cardSubtitle: {
-    fontSize: 16,
-    color: 'grey',
-    marginTop: 5,
-  },
   scrollContainer: {
     borderRadius: 20,
   },
 });
+
+export default Index;

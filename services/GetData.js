@@ -6,7 +6,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 export const GetDestination = async () => {
   try {
     const res = await axios.get(`${tunel}/destination`);
-    console.log('response data', res.data);
+
     return res.data;
   } catch (error) {
     console.log('services destintion get', error);
