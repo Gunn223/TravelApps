@@ -45,17 +45,34 @@ const index = () => {
       setErrorMessage('Password is required');
     } else {
       // Jika valid, navigasikan ke halaman Home
+      const cekEmail = validateEmail(email);
+      const cekPassword = validatePassword(password);
+      if (cekEmail) {
+        if (cekPassword) {
+          Register(data, (err) => {
+            if (err) {
+              setErrorMessage('Email Sudah Terdaftar');
+              return
+            }
 
-      router.replace('/signin');
+            router.replace('/signin');
+          });
+        } else {
+          setErrorMessage('Minimal Password 8 karakter');
+          return;
+        }
+      } else {
+        setErrorMessage('Mohon Masukan Email Yang valid');
+        return;
+      }
     }
 
     // Atur timeout untuk menghilangkan pesan kesalahan setelah 2 detik
     setTimeout(() => {
       setErrorMessage('');
-    }, 1000);
+    }, 3000);
 
     // dispacth(registerReducer(data));
-    Register(data);
   };
 
   const togglePasswordVisibility = () => {

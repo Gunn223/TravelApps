@@ -11,6 +11,7 @@ const index = () => {
   const [errorMessage, setErrorMessage] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [data, setData] = useState<any[]>([]);
+  const [cekUser, setCekUser] = useState('');
   const [inputUser, SetinputUser] = useState({
     email: '',
     password: '',
@@ -32,11 +33,7 @@ const index = () => {
     const LoginUser = async () => {
       try {
         const DataLogin = await Login(inputUser, (errorMessage: any) => {
-          if (errorMessage) {
-            // setErrorMessage(errorMessage.message);
-            // kondisi terlihat sebelumdi eksekusi
-            // handle login error
-          }
+          setCekUser(errorMessage.code);
         });
         setData(DataLogin);
       } catch (error) {
@@ -71,6 +68,7 @@ const index = () => {
   }, []);
   useEffect(() => {
     const RouteHome = async () => {
+
       if (data && data.length > 0) {
         const { token, user } = data[0];
         await AsyncStorage.setItem('token', token);

@@ -3,11 +3,13 @@ import React, { useEffect, useState } from 'react';
 import CardPromotionHome from '../../../src/components/CardsPromotionHome';
 import CardDestination from '../../../src/components/CardDestination';
 import { GetDestination } from '../../../services/GetData';
+import { formatTanggal } from '../../../services/DateFormater';
 
 const index = () => {
   const [item, setItem] = useState([]);
   const [itemNew, setItemNew] = useState([]);
-
+  const [formattdDate, SetFormatedDate] = useState('');
+  console.log(formattdDate);
   useEffect(() => {
     const loadData = async () => {
       try {
@@ -15,7 +17,17 @@ const index = () => {
 
         // Check if data is not empty before setting 'item'
         if (data && data.length > 0) {
-          setItem(data);
+          console.log(data[0].kuota);
+          const filterKuota = data.filter((item) => item.kuota > 0);
+
+          if (filterKuota) {
+            const dateDestination = filterKuota.map((i, item) => {
+              const formateDate = formatTanggal(item.date);
+              // perbaiki fungsi tanggal di ini untuk menampilkan tanggal pada menu seperti bokking
+              SetFormatedDate(formateDate[i++]);
+            });
+            setItem(filterKuota);
+          }
         }
 
         // Use 'filter' to get items with 'kuota' less than 30
@@ -94,7 +106,7 @@ const index = () => {
                 style={{ marginTop: 10, marginStart: 15 }}>
                 <CardDestination
                   title={trip.title}
-                  date={trip.date}
+                  date={formattdDate}
                   image={trip.image}
                   id={trip.id_destination}
                 />
@@ -113,7 +125,7 @@ const index = () => {
                 style={{ marginTop: 10, marginStart: 15 }}>
                 <CardDestination
                   title={trip.title}
-                  date={trip.date}
+                  date={formattdDate}
                   image={trip.image}
                   id={trip.id_destination}
                 />

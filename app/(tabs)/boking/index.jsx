@@ -6,13 +6,47 @@ import { GetDestination } from '../../../services/GetData';
 const Index = () => {
   const [data, setData] = useState([]);
   const [fadeAnim] = useState(new Animated.Value(0));
+  const [inputTanggal, setInputTanggal] = useState('2024-03-21');
+  const [formattedTanggal, setFormattedTanggal] = useState('');
+
+  const formatTanggal = () => {
+    const tanggalObj = new Date(inputTanggal);
+    const namaBulan = [
+      'Januari',
+      'Februari',
+      'Maret',
+      'April',
+      'Mei',
+      'Juni',
+      'Juli',
+      'Agustus',
+      'September',
+      'Oktober',
+      'November',
+      'Desember',
+    ];
+
+    const tanggal = tanggalObj.getDate();
+    const bulan = namaBulan[tanggalObj.getMonth()];
+    const tahun = tanggalObj.getFullYear();
+
+    const hasilFormat = `${tanggal}-${bulan}-${tahun}`;
+    setFormattedTanggal(hasilFormat);
+  };
 
   useEffect(() => {
     const loadData = async () => {
       try {
         const destinationData = await GetDestination();
         if (destinationData && destinationData.length > 0) {
-          setData(destinationData);
+          const filterDestinationKuota = destinationData.filter((item) => item.kuota > 0);
+          if (filterDestinationKuota) {
+            const formattedTanggal = filterDestinationKuota.map((tgl) => tgl.date);
+            setInputTanggal(formattedTanggal);
+
+            setData(filterDestinationKuota);
+          }
+          formatTanggal();
           animateFadeIn(); // Panggil fungsi animateFadeIn setelah data diambil
         }
       } catch (error) {
@@ -53,7 +87,7 @@ const Index = () => {
                 alignItems: 'center',
               }}>
               <Text style={styles.cardTitle}>{item.title}</Text>
-              <Text style={styles.cardTitle}>{item.date}</Text>
+              <Text style={styles.cardTitle}>{formattedTanggal}</Text>
             </View>
             <Link
               href={`/detail?id=${item.id_destination}`}

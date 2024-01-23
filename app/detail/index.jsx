@@ -8,12 +8,14 @@ import {
   BackHandler,
   ActivityIndicator,
   Alert,
+  Linking,
 } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 import React, { useEffect, useState } from 'react';
 import { Link, router, useLocalSearchParams } from 'expo-router';
-import { GetDestinationbyId } from '../../services/GetData';
-import { addBooking } from '../../services/PostData';
+import { GetDestinationbyId, GetUserbyId } from '../../services/GetData';
+import { Payment, addBooking, payment } from '../../services/PostData';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 const index = () => {
   const { id } = useLocalSearchParams();
   const [data, setData] = React.useState([]);
@@ -64,11 +66,21 @@ const index = () => {
           text: 'Ya',
           onPress: async () => {
             // Lakukan booking jika pengguna menekan tombol 'Ya'
-            const result = await addBooking(item);
+            const resultdb = await addBooking(item);
+            const modelData = {
+              amount: data[0].price,
+              orderid: data[0].id_destination,
+            };
 
+            const paymentResult = await Payment(modelData);
+            const url = paymentResult.token.redirect_url;
+            console.log(url);
             // Tampilkan pesan berhasil atau gagal, sesuai dengan respons dari addBooking
-            if (result) {
-              Alert.alert('Booking Berhasil', 'Terima kasih! Booking Anda telah berhasil.');
+            if (paymentResult) {
+              Alert.alert('Booking Berhasil', 'lanjutkan ke pembayaran');
+              setTimeout(() => {
+                Linking.openURL(url);
+              }, 3000);
             } else {
               Alert.alert('Booking Gagal', 'Maaf, terjadi kesalahan saat melakukan booking. Silakan coba lagi.');
             }

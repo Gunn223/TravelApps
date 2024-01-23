@@ -3,7 +3,7 @@ import qs from 'qs';
 import tunel from './ngrok';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export const Register = async (data = {}) => {
+export const Register = async (data = {}, errMessage) => {
   try {
     const options = {
       method: 'POST',
@@ -24,11 +24,11 @@ export const Register = async (data = {}) => {
       phone_number: data.phone_number || '00000',
       password: data.password || 'default',
     });
-    console.log(requestData);
+
     const res = await axios.post(options.url, requestData, options);
     console.log('Registrasi berhasil:', res.data);
   } catch (error) {
-    console.error('Error Register:', error);
+    return errMessage(error.message);
   }
 };
 
@@ -80,9 +80,26 @@ export const Login = async (userData, errMessage) => {
     return await res.data;
   } catch (error) {
     errMessage(error);
+    console.log(error);
   }
 };
+export const Payment = async (data) => {
+  const options = {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    url: `${tunel}/booking/payment`,
+  };
 
+  const datas = qs.stringify({
+    clienttoken: 'SB-Mid-client-pb78hw7xCh1fg48O',
+    amout: data.amount,
+    orderid: data.orderid,
+  });
+
+  const res = await axios.post(options.url, datas, options);
+
+  return res.data;
+};
 export const addBooking = async (item) => {
   const options = {
     method: 'POST',
