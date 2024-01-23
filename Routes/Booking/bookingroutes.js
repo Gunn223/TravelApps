@@ -1,6 +1,16 @@
 const express = require('express');
 const db = require('../../app/conn');
 const router = express.Router();
+const midtransClient = require('midtrans-client');
+
+router.get('/', (req, res) => {
+  const query = 'SELECT * FROM `table_boking`';
+  db.query(query, (err, result) => {
+    if (err) throw err;
+    const data = JSON.stringify(result);
+    res.send(data);
+  });
+});
 router.post('/addBooking', (req, res) => {
   const { date_boking, status_destination, destination_id, user_id } = req.body;
   console.log(req.body);
@@ -80,6 +90,34 @@ router.post('/addBooking', (req, res) => {
       });
     });
   });
+});
+
+router.post('/payment', (req, res) => {
+  const { clienttoken, amout, orderid, name, email, telp } = req.body;
+  console.log({ clienttoken, amout, orderid });
+  let snap = new midtransClient.Snap({
+    isProduction: false,
+    serverKey: 'SB-Mid-server-lZsaDfZ8_G7hD-GFHXH_LBEQ',
+    clientKey: clienttoken,
+  });
+
+  let data = {
+    transaction_details: {
+      order_id: orderid,
+      gross_amount: amout,
+    },
+    credit_card: {
+      secure: true,
+    },
+  };
+  snap
+    .createTransaction(data)
+    .then((token) => {
+      res.json({ token: token, status: 200, message: 'Payment Token' });
+    })
+    .catch((err) => {
+      console.log('err from payment', err);
+    });
 });
 
 module.exports = router;

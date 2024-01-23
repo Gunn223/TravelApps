@@ -59,8 +59,8 @@ router.post('/login', async (req, res) => {
     }
     const token = uuidv4();
     // ubah men
-    console.log(token);
-    const responseData = [{ user: result[0], token: token }];
+    const responseData = [{ user: result[0], token: token, clienttoken: 'SB-Mid-client-pb78hw7xCh1fg48O' }];
+
     res.send(responseData);
   });
 });
@@ -68,26 +68,61 @@ router.post('/login', async (req, res) => {
 router.post('/addUser', async (req, res) => {
   const { username, lokasi, bio, sampul_bg, image_profile, email, phone_number, password } = req.body;
   const hashPass = await byrcpt.hash(password, 13);
-  // const decode = await byrcpt.compare(password, hashPass);
-  // console.log(decode, 'decode');
+
   // Validasi data (misalnya, pastikan bahwa username, email, dan phone_number sudah ada)
   if (!username || !email || !phone_number) {
     return res.status(400).json({ error: 'Mohon isi semua kolom yang diperlukan.' });
   }
 
-  const query = `
-     INSERT INTO users (username, lokasi, bio, sampul_bg, image_profile, email, phone_number,password)
-     VALUES (?, ?, ?, ?, ?, ?, ?,?)
-   `;
+  // Fungsi untuk memeriksa apakah email sudah terdaftar
+  const checkIfEmailExists = (email, callback) => {
+    const query = `
+      SELECT * FROM users
+      WHERE email = ?
+    `;
 
-  db.query(query, [username, lokasi, bio, sampul_bg, image_profile, email, phone_number, hashPass], (err, result) => {
+    db.query(query, [email], (err, result) => {
+      if (err) {
+        console.error('Error checking email:', err);
+        return callback(err, null);
+      }
+
+      // Mengembalikan hasil query (bisa null jika email belum terdaftar)
+      callback(null, result);
+    });
+  };
+
+  // Pada bagian sebelum query penambahan pengguna
+  checkIfEmailExists(email, (err, result) => {
     if (err) {
-      console.error('Gagal menambahkan pengguna:', err);
-      return res.status(500).json({ error: 'Gagal menambahkan pengguna' });
+      console.error('Error checking email existence:', err);
+      return res.status(500).json({ error: 'Gagal memeriksa email' });
     }
 
-    const data = JSON.stringify(result);
-    res.status(201).send(data); // Mengirimkan respons dengan kode status 201 Created
+    // Jika hasil query tidak kosong, email sudah terdaftar
+    if (result && result.length > 0) {
+      return res.status(400).json({ error: 'Email sudah terdaftar' });
+    }
+
+    // Jika email belum terdaftar, lanjutkan dengan query penambahan pengguna
+    const insertQuery = `
+      INSERT INTO users (username, lokasi, bio, sampul_bg, image_profile, email, phone_number, password)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    `;
+
+    db.query(
+      insertQuery,
+      [username, lokasi, bio, sampul_bg, image_profile, email, phone_number, hashPass],
+      (insertErr, insertResult) => {
+        if (insertErr) {
+          console.error('Gagal menambahkan pengguna:', insertErr);
+          return res.status(500).json({ error: 'Gagal menambahkan pengguna' });
+        }
+
+        // Sukses menambahkan pengguna
+        return res.status(201).json({ message: 'Pengguna berhasil ditambahkan' });
+      },
+    );
   });
 });
 
