@@ -1,0 +1,13 @@
+body {
+  margin: 0;
+  padding: 0;
+  box-sizing: content-box;
+}
+
+sideitem:hover {
+  color: blue;
+}
+.completed-todo {
+  text-decoration: line-through; /* Garis pada todo yang sudah selesai */
+  background-color: #d4edda; /* Warna latar belakang untuk todo yang sudah selesai */
+}
