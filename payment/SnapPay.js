@@ -3,8 +3,8 @@ const midtransClient = require('midtrans-client');
 console.log('serverkey', process.env.SERVER_KEY);
 let snap = new midtransClient.Snap({
   isProduction: false,
-  serverKey: 'SB-Mid-server-lZsaDfZ8_G7hD-GFHXH_LBEQ',
-  clientKey: 'SB-Mid-client-pb78hw7xCh1fg48O',
+  serverKey: process.env.SERVER_KEY,
+  clientKey: process.env.CLIENTKEY,
 });
 
 let parameter = {
